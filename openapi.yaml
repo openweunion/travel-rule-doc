@@ -1,0 +1,211 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Travel Rule API
+  description: |
+    This API provides Travel Rule compliance services for virtual asset withdrawals, 
+    allowing VASPs to submit withdrawal requests that comply with FATF Travel Rule requirements.
+# servers:
+#   - url: https://api.binance.com/sapi/v1
+#     description: Binance API Server
+
+tags:
+  - name: Travel Rule Withdrawal
+    description: |
+      Endpoints for submitting Travel Rule compliant withdrawal requests for local entities.
+      
+      **Important Implementation Notes:**
+      
+      **Network Selection:**
+      - If network parameter is not provided, the system uses the default network for the specified coin
+      - If the provided address does not match the default network, the withdrawal will be rejected
+      - Use GET /sapi/v1/capital/config/getall (HMAC SHA256) to get available networks and isDefault flags
+
+paths:
+  "/withdraw/apply":
+    post:
+      tags:
+        - Travel Rule Withdrawal
+      operationId: submitWithdrawalRequest
+      summary: Submit Travel Rule Withdrawal Request
+      description: |
+        Submit a withdrawal request for local entities that require Travel Rule compliance.
+        This endpoint allows VASPs to submit withdrawal requests with all necessary 
+        Travel Rule information including originator and beneficiary details.
+        
+        **Important Notes:**
+        - If network is not sent, the system will return with the default network of the coin, 
+          but if the address could not match the default network, the withdraw will be rejected.
+        - You can get network and isDefault information in networkList of a coin in the response 
+          of GET /sapi/v1/capital/config/getall (HMAC SHA256).
+        - Questionnaire is different for each local entity, please refer to the 
+          Withdraw Questionnaire Contents page.
+        - If getting error like "Questionnaire format not valid" or "Questionnaire must not be blank", 
+          please try to verify the format of the questionnaire and use URL-encoded format.
+      parameters:
+        - name: coin
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "BTC"
+        - name: withdrawOrderId
+          in: query
+          required: false
+          schema:
+            type: string
+          example: "WITHDRAW_001"
+        - name: network
+          in: query
+          required: false
+          schema:
+            type: string
+          example: "Ethereum"
+        - name: address
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "0x4a36C00099227E7F0487fff8CC75Df97e2B5D6E2"
+        - name: addressTag
+          in: query
+          required: false
+          schema:
+            type: string
+          example: "123456"
+        - name: amount
+          in: query
+          required: true
+          schema:
+            type: number
+            format: decimal
+          example: 0.001
+        - name: transactionFeeFlag
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: When making internal transfer, true for returning the fee to the destination account; false for returning the fee back to the departure account. Default false.
+          example: false
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Description of the address. Address book cap is 200, space in name should be encoded into %20
+          example: "My%20Wallet%201"
+        - name: walletType
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: The wallet type for withdraw, 0-spot wallet, 1-funding wallet. Default walletType is the current "selected wallet" under wallet->Fiat and Spot/Funding->Deposit
+          example: 0
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+          example: 5000
+        - name: timestamp
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1640995200000
+        - name: questionnaire
+          in: query
+          required: true
+          schema:
+            type: string
+          description: |
+            JSON format questionnaire answers for Travel Rule compliance.
+            Format varies by jurisdiction (e.g., Bahrain has specific requirements).
+            See QuestionnaireData and BahrainQuestionnaireData schemas for details.
+          examples:
+            general:
+              summary: General Questionnaire
+              value: '{"isAddressOwner":2,"bnfType":0,"bnfFirstName":"John","bnfLastName":"Doe","country":"us","city":"New York","sendTo":2,"vasp":"BINANCE","vaspName":"Binance"}'
+            bahrain:
+              summary: Bahrain Questionnaire
+              value: '{"isAddressOwner":2,"bnfType":0,"bnfFirstName":"Ahmed","bnfLastName":"Al-Khalifa","country":"bh","city":"Manama","sendTo":2,"vasp":"BINANCE","vaspName":"Binance"}'
+        
+      # requestBody:
+      #   required: false
+      #   content:
+      #     application/json:
+      #       schema:
+      #         type: object
+      #         description: Optional request body for additional parameters
+      #       examples:
+      #         basic_withdrawal:
+      #           summary: Basic BTC Withdrawal Example
+      #           description: |
+      #             Example URL with query parameters for a basic BTC withdrawal.
+      #             All required parameters are passed as query parameters.
+      #           value: {}
+      #         complete_withdrawal:
+      #           summary: Complete Withdrawal Example
+      #           description: |
+      #             Example URL with all available query parameters.
+      #             Demonstrates proper formatting for all optional parameters.
+      #           value: {}
+      #         self_withdrawal:
+      #           summary: Self Withdrawal Example
+      #           description: |
+      #             Example URL for a self-withdrawal where the user sends to their own address.
+      #             Minimal questionnaire data required.
+      #           value: {}
+      responses:
+        "200":
+          description: Withdrawal request submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WithdrawResponse'
+        
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-MBX-APIKEY
+    SignatureAuth:
+      type: apiKey
+      in: header
+      name: X-SIGNATURE
+
+  schemas:
+    WithdrawRequest:
+      $ref: components/schemas/WithdrawRequest.yaml
+    QuestionnaireData:
+      $ref: components/schemas/QuestionnaireData.yaml
+    BahrainDepositQuestionnaireContents:
+      $ref: components/schemas/BahrainDepositQuestionnaireContents.yaml
+    WithdrawResponse:
+      $ref: components/schemas/WithdrawResponse.yaml
+    ErrorResponse:
+      $ref: components/schemas/ErrorResponse.yaml
+
+  parameters:
+    PayloadHeader:
+      $ref: components/parameters/PayloadHeader.yaml
+    SignatureHeader:
+      $ref: components/parameters/SignatureHeader.yaml
+
+  responses:
+    SuccessResponse:
+      $ref: components/responses/SuccessResponse.yaml
+    BadRequestResponse:
+      $ref: components/responses/BadRequestResponse.yaml
+    UnauthorizedResponse:
+      $ref: components/responses/UnauthorizedResponse.yaml
+    InternalServerErrorResponse:
+      $ref: components/responses/InternalServerErrorResponse.yaml
+
+security:
+  - ApiKeyAuth: []
+  - SignatureAuth: []

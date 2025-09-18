@@ -1,0 +1,21 @@
+description: Unauthorized - Invalid API key or signature
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/ErrorResponse.yaml'
+    examples:
+      invalid_api_key:
+        summary: Invalid API key
+        value:
+          code: -1001
+          msg: "Invalid API key"
+      invalid_signature:
+        summary: Invalid signature
+        value:
+          code: -1001
+          msg: "Invalid signature"
+      missing_headers:
+        summary: Missing authentication headers
+        value:
+          code: -1001
+          msg: "Missing required authentication headers"

@@ -1,0 +1,44 @@
+type: object
+required:
+  - isAddressOwner
+  - sendTo
+properties:
+  isAddressOwner:
+    type: integer
+    description: Address owner type
+    enum: [1, 2]
+    example: 2
+  bnfType:
+    type: integer
+    description: Beneficiary type (required when isAddressOwner=2)
+    enum: [0, 1]
+    example: 0
+  bnfFirstName:
+    type: string
+    description: Beneficiary first name (required when isAddressOwner=2)
+    example: "John"
+  bnfLastName:
+    type: string
+    description: Beneficiary last name (required when isAddressOwner=2)
+    example: "Doe"
+  country:
+    type: string
+    description: Beneficiary country code, ISO 2 digit, lowercase (required when isAddressOwner=2)
+    example: "us"
+  city:
+    type: string
+    description: Beneficiary city (required when isAddressOwner=2)
+    example: "New York"
+  sendTo:
+    type: integer
+    description: Send target type
+    enum: [1, 2]
+    example: 2
+  vasp:
+    type: string
+    description: VASP code of the beneficiary (required when sendTo=2)
+    example: "BINANCE"
+  vaspName:
+    type: string
+    description: VASP name (required when vasp=others)
+    example: "Binance"

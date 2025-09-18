@@ -1,0 +1,16 @@
+description: Internal Server Error
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/ErrorResponse.yaml'
+    examples:
+      server_error:
+        summary: Internal server error
+        value:
+          code: -1002
+          msg: "Internal server error"
+      service_unavailable:
+        summary: Service temporarily unavailable
+        value:
+          code: -1002
+          msg: "Service temporarily unavailable"

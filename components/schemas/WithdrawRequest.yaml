@@ -1,0 +1,59 @@
+type: object
+required:
+  - coin
+  - address
+  - amount
+  - timestamp
+  - questionnaire
+properties:
+  coin:
+    type: string
+    example: "BTC"
+    enum: ["BTC", "ETH", "USDT", "BNB", "ADA", "DOT", "LINK", "LTC", "BCH", "XRP"]
+  withdrawOrderId:
+    type: string
+    description: Client-defined withdrawal order ID (internal withdraw ID)
+    example: "WITHDRAW_001"
+  network:
+    type: string
+    description: Network type (e.g., mainnet, testnet). If not provided, uses default network for the coin
+    example: "BTC"
+  address:
+    type: string
+    description: Withdrawal target address
+    example: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+  addressTag:
+    type: string
+    description: Secondary address identifier for coins like XRP, XMR, etc.
+    example: "123456"
+  amount:
+    type: number
+    description: Withdrawal amount
+    example: 0.001
+  transactionFeeFlag:
+    type: boolean
+    description: |
+      When making internal transfer, true for returning the fee to the destination account; 
+      false for returning the fee back to the departure account. Default false.
+    default: false
+  name:
+    type: string
+    description: Description of the address. Address book cap is 200, space in name should be encoded into %20
+    example: "My Bitcoin Wallet"
+  walletType:
+    type: integer
+    description: The wallet type for withdraw, 0-spot wallet, 1-funding wallet. Default walletType is the current "selected wallet"
+    enum: [0, 1]
+    default: 0
+  recvWindow:
+    type: integer
+    description: Receive window time
+    example: 5000
+  timestamp:
+    type: integer
+    description: Request timestamp
+    example: 1640995200000
+  questionnaire:
+    type: string
+    description: JSON format questionnaire answers for Travel Rule compliance
+    example: '{"isAddressOwner":2,"bnfType":0,"bnfFirstName":"John","bnfLastName":"Doe","country":"us","city":"New York","sendTo":2,"vasp":"BINANCE","vaspName":"Binance"}'

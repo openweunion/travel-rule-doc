@@ -1,0 +1,74 @@
+type: object
+description: |
+  Deposit Questionnaire Contents specifically for Bahrain jurisdiction.
+  All fields follow Bahrain regulatory requirements for existing local entities.
+required:
+  - depositOriginator
+  - receiveFrom
+example:
+  depositOriginator: 2
+  orgType: 0
+  orgFirstName: "Ahmed"
+  orgLastName: "Al-Khalifa"
+  country: "bh"
+  city: "Manama"
+  receiveFrom: 2
+  vasp: "BINANCE"
+  vaspName: "Binance"
+properties:
+  depositOriginator:
+    type: integer
+    description: |
+      Deposit originator type
+      1: Myself, 2: Not myself
+    enum: [1, 2]
+    example: 2
+  orgType:
+    type: integer
+    description: |
+      Originator type (required when depositOriginator=2)
+      0: Individual, 1: Corporate/Entity
+    enum: [0, 1]
+    example: 0
+  orgFirstName:
+    type: string
+    description: |
+      Originator's First Name (required when depositOriginator=2)
+      For more information please refer to the Name restrictions section in the appendix.
+    example: "Ahmed"
+  orgLastName:
+    type: string
+    description: |
+      Originator's Last Name (required when depositOriginator=2)
+      For more information please refer to the Name restrictions section in the appendix.
+    example: "Al-Khalifa"
+  country:
+    type: string
+    description: |
+      Originator's residence country code, ISO 2 digit, lowercase (required when depositOriginator=2)
+      For more information please refer to the Countries and Regions section in the appendix.
+    example: "bh"
+  city:
+    type: string
+    example: "Manama"
+  receiveFrom:
+    type: integer
+    description: |
+      Receive source type
+      1: Private Wallet, 2: Another VASP
+    enum: [1, 2]
+    example: 2
+  vasp:
+    type: string
+    description: |
+      VASP code of the originator (required when receiveFrom=2)
+      Use specific VASP codes for registered VASPs in Bahrain.
+      The VASP code of Binance entities is BINANCE.
+    example: "BINANCE"
+  vaspName:
+    type: string
+    description: |
+      VASP name (required when vasp=others)
+      The Vasp List API provides the VASP. If the VASP cannot be found, 
+      please input "others" within vasp list and the name of the exchange within vaspName field.
+    example: "Binance"

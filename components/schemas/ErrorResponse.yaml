@@ -1,0 +1,13 @@
+type: object
+required:
+  - code
+  - msg
+properties:
+  code:
+    type: integer
+    description: Error code
+    example: -1000
+  msg:
+    type: string
+    description: Error message
+    example: "Invalid request"

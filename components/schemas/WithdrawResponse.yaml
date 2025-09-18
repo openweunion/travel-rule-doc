@@ -1,0 +1,18 @@
+type: object
+required:
+  - trId
+  - accepted
+  - info
+properties:
+  trId:
+    type: integer
+    description: Travel Rule record ID
+    example: 123456
+  accepted:
+    type: boolean
+    description: Whether the withdrawal request is accepted
+    example: true
+  info:
+    type: string
+    description: Detailed information about the withdrawal result
+    example: "Withdraw request accepted"

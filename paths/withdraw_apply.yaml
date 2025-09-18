@@ -1,0 +1,132 @@
+post:
+  tags:
+    - Travel Rule Withdrawal
+  operationId: submitWithdrawalRequest
+  summary: Submit Travel Rule Withdrawal Request
+  description: |
+    Submit a withdrawal request for local entities that require Travel Rule compliance.
+    This endpoint allows VASPs to submit withdrawal requests with all necessary 
+    Travel Rule information including originator and beneficiary details.
+  parameters:
+    - $ref: ../components/parameters/PayloadHeader.yaml
+    - $ref: ../components/parameters/SignatureHeader.yaml
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/WithdrawRequest.yaml'
+        examples:
+          basic_withdrawal:
+            summary: Basic BTC Withdrawal
+            value:
+              coin: "BTC"
+              address: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+              amount: 0.001
+              timestamp: 1640995200000
+              questionnaire: '{"isAddressOwner":2,"bnfType":0,"bnfFirstName":"John","bnfLastName":"Doe","country":"us","city":"New York","sendTo":2,"vasp":"BINANCE","vaspName":"Binance"}'
+          self_withdrawal:
+            summary: Self Withdrawal
+            value:
+              coin: "ETH"
+              address: "0x742d35Cc6634C0532925a3b8D0C4C4C4C4C4C4C4"
+              amount: 0.1
+              timestamp: 1640995200000
+              questionnaire: '{"isAddressOwner":1,"sendTo":1}'
+          private_wallet:
+            summary: Private Wallet Withdrawal
+            value:
+              coin: "USDT"
+              address: "TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE"
+              amount: 1000
+              timestamp: 1640995200000
+              questionnaire: '{"isAddressOwner":2,"bnfType":0,"bnfFirstName":"Alice","bnfLastName":"Smith","country":"ca","city":"Toronto","sendTo":1}'
+  responses:
+    "200":
+      description: Withdrawal request submitted successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/WithdrawResponse.yaml'
+          examples:
+            success:
+              summary: Successful submission
+              value:
+                trId: 123456
+                accepted: true
+                info: "Withdraw request accepted"
+            rejected:
+              summary: Request rejected
+              value:
+                trId: 123457
+                accepted: false
+                info: "Withdraw request rejected due to compliance issues"
+    "400":
+      description: Bad Request - Invalid parameters or questionnaire format
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/ErrorResponse.yaml'
+          examples:
+            invalid_questionnaire:
+              summary: Invalid questionnaire format
+              value:
+                code: -1000
+                msg: "Questionnaire format not valid"
+            missing_required_fields:
+              summary: Missing required fields
+              value:
+                code: -1000
+                msg: "Required fields missing: coin, address, amount, timestamp, questionnaire"
+    "401":
+      description: Unauthorized - Invalid API key or signature
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/ErrorResponse.yaml'
+          examples:
+            invalid_api_key:
+              summary: Invalid API key
+              value:
+                code: -1001
+                msg: "Invalid API key"
+            invalid_signature:
+              summary: Invalid signature
+              value:
+                code: -1001
+                msg: "Invalid signature"
+    "403":
+      description: Forbidden - Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/ErrorResponse.yaml'
+          example:
+            code: -1003
+            msg: "Insufficient permissions for withdrawal"
+    "422":
+      description: Unprocessable Entity - Questionnaire validation failed
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/ErrorResponse.yaml'
+          examples:
+            questionnaire_blank:
+              summary: Blank questionnaire
+              value:
+                code: -1004
+                msg: "Questionnaire must not be blank"
+            invalid_country_code:
+              summary: Invalid country code
+              value:
+                code: -1004
+                msg: "Invalid country code format"
+    "500":
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/ErrorResponse.yaml'
+          example:
+            code: -1002
+            msg: "Internal server error"

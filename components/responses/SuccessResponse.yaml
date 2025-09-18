@@ -1,0 +1,18 @@
+description: Successful response
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/WithdrawResponse.yaml'
+    examples:
+      success:
+        summary: Successful submission
+        value:
+          trId: 123456
+          accepted: true
+          info: "Withdraw request accepted"
+      rejected:
+        summary: Request rejected
+        value:
+          trId: 123457
+          accepted: false
+          info: "Withdraw request rejected due to compliance issues"
