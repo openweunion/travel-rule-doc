@@ -26,21 +26,33 @@ travel-rule-doc/
 
 ## Quick Start
 
-1. **View the API Documentation**:
+### Local Development
+
+1. **Start Local Server**:
+   ```bash
+   ./deploy.sh
+   ```
+   Then open http://localhost:8080 in your browser
+
+2. **View the API Documentation**:
    - Open `openapi.yaml` in any OpenAPI-compatible tool
    - Use tools like Swagger UI, Redoc, or Postman
 
-2. **Generate Client SDKs**:
+3. **Generate Client SDKs**:
    ```bash
    # Using OpenAPI Generator
    openapi-generator-cli generate -i openapi.yaml -g javascript -o ./client-sdk
    ```
 
-3. **Validate the Specification**:
+4. **Validate the Specification**:
    ```bash
    # Using Swagger Codegen
    swagger-codegen validate -i openapi.yaml
    ```
+
+### GitHub Pages Deployment
+
+The documentation is automatically deployed to GitHub Pages when changes are pushed to the main branch. The deployment is configured in `.github/workflows/deploy-docs.yml`.
 
 ## Key Features
 
